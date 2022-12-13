@@ -13,6 +13,28 @@ const Modal = (function () {
             myModalOverlay = modalOverlay;
             modalObject = modalObject;
 
+            if (!myModal) {
+
+                myModal = document.createElement('div');
+                myModal.classList.add('modal');
+                myModal.classList.add('modal_closed');
+                myModal.classList.add('container_default');
+                myModal.id = modalObject.supermodal;
+                //let modalWindowMain = modalWindow.createElement('div');
+                document.body.append(myModal);
+
+                footerModal = document.createElement('footer');
+                footerModal.classList.add('modal__footer');
+                myModal.append(footerModal);
+
+                btnCancel = document.createElement('button');
+                btnCancel.classList.add('modal__cancel');
+                btnCancel.id = "modal-default-cancel";
+                btnCancel.textContent = 'Закрыть';
+                footerModal.append(btnCancel);
+            };
+
+
             if (modalObject.supermodalTitle) {
                 let modalWindowHeader = myModal.querySelector('h2');
                 if (modalWindowHeader) {
@@ -24,7 +46,7 @@ const Modal = (function () {
                 }
             }
             if (modalObject.supermodalContent) {
-                const mainDiv = modalWindow.querySelector('.modal__content');
+                const mainDiv = myModal.querySelector('.modal__content');
                 if (modalObject.supermodalContent.includes('https://www.youtube.com')) {
                     let newVideo = document.createElement('iframe');
                     newVideo.src = modalObject.supermodalContent;
@@ -38,7 +60,7 @@ const Modal = (function () {
                     if (mainDiv) {
                         mainDiv.append(newDiv);
                     }
-                    else { modalWindow.append(newDiv); }
+                    else { myModal.append(newDiv); }
                 }
 
             }
@@ -199,41 +221,49 @@ const Modal = (function () {
 
             document.addEventListener('DOMContentLoaded', this.goToLocalStorage);/* считываем данные из localStorage для приветствия */
 
+            if (!myModalWindow) {
+                //myModalWindow = document.querySelector('[' + dataSupermodal[i].dataset.supermodal + ']');
+                myModalWindow = document.querySelector('#my-custom-default');
+            };
+
+
             //const btnOpen = myModalContainer.querySelector('[data-supermodal]');/* кнопка "открыть окно " и клик по ней */
             myBtnOpen.addEventListener('click', this.openModal);
+
+
 
             const btnCross = myModalWindow.querySelector(".modal__close");/* кнопка "открыть окно " и клик по ней */
             if (btnCross) {
                 btnCross.addEventListener('click', this.hideModal);
-            }
+            };
 
             let btnCancel = myModalWindow.querySelector(".modal__cancel");/* кнопка "отмена " и клик по ней */
-            if (!btnCancel) {
+            /*if (!btnCancel) {
                 let footerModal = myModalWindow.querySelector(".modal__footer");
-                if(!footerModal){
-                   footerModal = document.createElement('footer');
-                   footerModal.classList.add('modal__footer'); 
-                   myModalWindow.append(footerModal); 
+                if (!footerModal) {
+                    footerModal = document.createElement('footer');
+                    footerModal.classList.add('modal__footer');
+                    myModalWindow.append(footerModal);
                 }
                 btnCancel = document.createElement('button');
                 btnCancel.classList.add('modal__cancel');
-                btnCancel.id="modal-default-cancel";
+                btnCancel.id = "modal-default-cancel";
                 btnCancel.textContent = 'Закрыть';
                 footerModal.append(btnCancel);
-            }
+            }*/
             btnCancel.addEventListener('click', this.hideModal);
 
             const btnSave = myModalWindow.querySelector("#modal-save");/* кнопка "сохранить данные " и клик по ней */
             if (btnSave) {
                 btnSave.addEventListener('click', this.saveModal);
-            }
+            };
 
             myModalWindow.addEventListener('input', this.getValue);// на модальное окно навешиваем событие инпут
 
             const clearDataBtn = myModalContainer.querySelector('#clear-data');/* очищаем localStorage */
             if (clearDataBtn) {
                 clearDataBtn.addEventListener("click", this.clearData);
-            }
+            };
 
         };
 
@@ -278,27 +308,12 @@ const Modal = (function () {
                 const appController = new ModalController();
                 let modalWindow = document.querySelector('#' + dataSupermodal[i].dataset.supermodal);
                 let modalOverlay = null;
-                try {
-                    let modalOverlay = modalWindow.previousElementSibling;
-                }
-                catch (err) { };
+                
                 const modalObject = {};
                 modalObject.supermodal = dataSupermodal[i].dataset.supermodal;
                 modalObject.supermodalTitle = dataSupermodal[i].dataset.supermodalTitle;
                 modalObject.supermodalContent = dataSupermodal[i].dataset.supermodalContent;
 
-
-                if (!modalWindow) {                    
-                
-                    modalWindow = document.createElement('div');
-                    modalWindow.classList.add('modal');
-                    modalWindow.classList.add('modal_closed');
-                    modalWindow.classList.add('container_default');                    
-                    modalWindow.id = dataSupermodal[i].dataset.supermodal;
-                    //let modalWindowMain = modalWindow.createElement('div');
-                    document.body.append(modalWindow);
-
-                };
                 appView.init(modalOverlay, modalWindow, conteiner, modalObject);
                 appModel.init(appView);
                 appController.init(appModel, conteiner, modalOverlay, modalWindow, dataSupermodal[i]);
